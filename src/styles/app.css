@@ -1,0 +1,26 @@
+
+.mainCont{
+    width:90%;
+    margin: 0 auto;
+}
+.searchBarContainer {
+  height: 200px;
+  width: 100%;
+}
+.gridContainer {
+  width: 28%;
+  margin: 10px;
+  padding: 0;
+  padding-right: 30px;
+}
+.movieTitles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.gridContainer li {
+  display: block;
+}
+.gridContainer img {
+  width: 100%;
+}
