@@ -2,7 +2,7 @@ import React, { Component } from "react";
 // import logo from './logo.svg';
 import "../src/styles/app.css";
 import data from "./data";
-// import Menu from "./component/menu"
+import SearchResults from "./component/search-results";
 
 class App extends Component {
   constructor(props) {
@@ -15,7 +15,8 @@ class App extends Component {
       title: "",
       titleSelected: false,
       genresSelected: false,
-      updatedList: {}
+      updatedList: {},
+      textBoxValue: ""
     };
     this.labelVal = "Title";
     this.titleList = "";
@@ -27,25 +28,21 @@ class App extends Component {
     this.setState({
       titleSelected: true
     });
-    if (labelVal === "Title") {
+    if (this.labelVal === "Title") {
       this.labelVal = "Title";
     } else {
       this.labelVal = "Genres";
     }
-    if (this.labelVal === "Title") {
-      this.titleList = currentList.sort((a, b) => {
-        if (a.title > b.title) {
-          return 1;
-        }
-        if (a.title < b.title) {
-          return -1;
-        }
-      });
+    this.titleList = currentList.sort((a, b) => {
+      if (a.title > b.title) {
+        return 1;
+      }
+      if (a.title < b.title) {
+        return -1;
+      }
+    });
 
-      this.setState({
-        updatedList: this.titleList
-      });
-    } else {
+    if (this.labelVal === "Genres") {
       this.genresList = currentList.sort((a, b) => {
         if (a.genres > b.genres) {
           return 1;
@@ -54,19 +51,22 @@ class App extends Component {
           return -1;
         }
       });
-      //   this.genresList.sort((a, b)=>{a-b});
       this.setState({
         updatedList: this.genresList
       });
     }
+
+    this.setState({
+      updatedList: this.titleList
+    });
   };
 
   handleChange = e => {
     let newList = "";
-    const currentList = this.state.updatedList;
+    const currentLists = this.state.updatedList;
     if (this.labelVal === "Title") {
       if (e.target.value !== "") {
-        newList = currentList.filter(item => {
+        newList = currentLists.filter(item => {
           const filterValue = e.target.value;
           return item.title.includes(filterValue);
         });
@@ -75,9 +75,9 @@ class App extends Component {
       }
     } else {
       if (e.target.value !== "") {
-        newList = currentList.filter(item => {
+        newList = currentLists.filter(item => {
           const filterValue = e.target.value;
-          return item.genres.includes(filterValue);
+          return item.title.includes(filterValue);
         });
       } else {
         newList = this.jsonData.data;
@@ -95,17 +95,7 @@ class App extends Component {
   render() {
     const data = this.state.searchValues;
     console.log(data);
-    const renderData = data.map((value, index) => {
-      return (
-        <ul className="gridContainer">
-          <li className="banner">
-            <img src={value.poster_path} />
-          </li>
-          <li className="title">{value.title}</li>
-          <li className="caption">{value.tagline}</li>
-        </ul>
-      );
-    });
+
     return (
       <div className="App mainCont">
         <header className="searchBarContainer">
@@ -116,21 +106,19 @@ class App extends Component {
               onChange={this.handleChange}
               placeholder="Search..."
             />
-            <button>Search</button>
+            <button onClick={this.handleChange}>Search</button>
             <button
               onClick={() => this.sortDescending((this.labelVal = "Genres"))}
             >
-              {" "}
-              Genres{" "}
+              Genres
             </button>
             <button
               onClick={() => this.sortDescending((this.labelVal = "Title"))}
             >
-              {" "}
-              title{" "}
+              Title
             </button>
           </div>
-          <div className="movieTitles">{renderData}</div>
+          <SearchResults data={data} sortDescending={this.sortDescending} />
         </header>
       </div>
     );
