@@ -1,8 +1,14 @@
 import React, { Component } from "react";
-// import logo from './logo.svg';
+import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
 import "../src/styles/app.css";
 import data from "./data";
 import SearchResults from "./component/search-results";
+import detailComponent from "./component/detail-page";
+import history from "./component/history";
+import {} from "react-router-redux";
+import { createStore, applyMiddleware, combineReducer } from "redux";
+import { routerReducer, routerMiddleware } from "react-router-dom";
+import { Provider } from "react-redux";
 
 class App extends Component {
   constructor(props) {
@@ -16,7 +22,8 @@ class App extends Component {
       titleSelected: false,
       genresSelected: false,
       updatedList: {},
-      textBoxValue: ""
+      textBoxValue: "",
+      filterValue: {}
     };
     this.labelVal = "Title";
     this.titleList = "";
@@ -62,35 +69,42 @@ class App extends Component {
   };
 
   handleChange = e => {
-    let newList = "";
-    const currentLists = this.state.updatedList;
-    if (this.labelVal === "Title") {
-      if (e.target.value !== "") {
-        newList = currentLists.filter(item => {
-          const filterValue = e.target.value;
-          return item.title.includes(filterValue);
-        });
-      } else {
-        newList = this.jsonData.data;
-      }
-    } else {
-      if (e.target.value !== "") {
-        newList = currentLists.filter(item => {
-          const filterValue = e.target.value;
-          return item.title.includes(filterValue);
-        });
-      } else {
-        newList = this.jsonData.data;
-      }
-    }
+    let filterValue = e.target.value;
     this.setState({
-      searchValues: newList
+      filterValue: filterValue
     });
   };
-  hoverDownMenu = () => {
-    this.setState({
-      show: false
-    });
+  submitSearchValues = () => {
+    const searchVal = this.state.filterValue;
+    let currentLists = this.state.updatedList;
+    let sortedList = "";
+    if (this.labelVal === "Title") {
+      if (searchVal !== "") {
+        sortedList = currentLists.filter(item => {
+          return item.title.includes(searchVal);
+        });
+        this.setState({
+          searchValues: sortedList
+        });
+      } else {
+        this.setState({
+          searchValues: this.jsonData.data
+        });
+      }
+    } else {
+      if (searchVal !== "") {
+        sortedList = currentLists.filter(item => {
+          return item.genres.includes(searchVal);
+        });
+        this.setState({
+          searchValues: sortedList
+        });
+      } else {
+        this.setState({
+          searchValues: this.jsonData.data
+        });
+      }
+    }
   };
   render() {
     const data = this.state.searchValues;
@@ -106,7 +120,7 @@ class App extends Component {
               onChange={this.handleChange}
               placeholder="Search..."
             />
-            <button onClick={this.handleChange}>Search</button>
+            <button onClick={this.submitSearchValues}>Search</button>
             <button
               onClick={() => this.sortDescending((this.labelVal = "Genres"))}
             >
@@ -118,7 +132,13 @@ class App extends Component {
               Title
             </button>
           </div>
-          <SearchResults data={data} sortDescending={this.sortDescending} />
+          <Router history={history}>
+            <Switch>
+              <Route path="/:id" component={detailComponent} />
+              <SearchResults data={data} sortDescending={this.sortDescending} />
+              <Route path="/" component={App} />
+            </Switch>
+          </Router>
         </header>
       </div>
     );
