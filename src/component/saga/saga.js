@@ -6,10 +6,13 @@ import {
   REQUEST_API_DATA,
   receiveApiData,
   CLICK_REQUEST_DATA,
-  clickStoreData
+  clickStoreData,
+  FILTERED_DATA,
+  filteredFunc
 } from "../actions/actions";
 import { fetchData } from "../api/api";
 import { fetchDetailMovie } from "../api/fetchDetailMovie";
+import {sortDescending} from '../../app'
 // export const FETCH_USERS  = 'FETCH_USERS';
 
 const getPage = state => state.nextPage;
@@ -24,13 +27,17 @@ function* fetchProducts(action) {
     console.log(e);
   }
 }
+function* filteredData(){
+  const action = yield take(FILTERED_DATA);
+  yield put(filteredFunc(action.payload));
+  // yield put(filteredFunc());
+}
 function* clickUpdateData(action) {
   try {
     while (true) {
-      console.log("ACTIONS", action.params);
-
+      console.log("ACTIONS", action.Detaildata);
       const page = yield select(getPage);
-      const dataDetail = yield call(fetchDetailMovie, action.params, action.data, page);
+      const dataDetail = yield call(fetchDetailMovie, action.params, page);
       yield put(clickStoreData(dataDetail));
       // const task = yield fork(fetchDetailMovie);
       yield delay(5000);
@@ -42,5 +49,6 @@ function* clickUpdateData(action) {
 function* mySaga() {
   yield takeEvery(CLICK_REQUEST_DATA, clickUpdateData);
   yield takeEvery(REQUEST_API_DATA, fetchProducts);
+  yield takeEvery(FILTERED_DATA, filteredData);
 }
 export default mySaga;

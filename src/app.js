@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
 import "../src/styles/app.css";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import data from "./data";
 import SearchResults from "./component/search-results";
 import detailComponent from "./component/detail-page";
 import history from "./component/history";
-import { bindActionCreators } from 'redux';
-import { requestApiData, clickStoreData } from './component/actions/actions';
+import { bindActionCreators } from "redux";
+import { requestApiData, clickStoreData, filteredFunc } from "./component/actions/actions";
 // import {} from "react-router-redux";
 import { routerReducer, routerMiddleware } from "react-router-dom";
-
 
 class App extends Component {
   constructor(props) {
@@ -32,9 +31,9 @@ class App extends Component {
     this.genresList = "";
   }
 
-componentDidMount(){
-  this.props.requestApiData();
-}
+  componentDidMount() {
+    this.props.requestApiData();
+  }
   sortDescending = labelVal => {
     const currentList = this.state.searchValues;
     this.setState({
@@ -53,7 +52,7 @@ componentDidMount(){
         return -1;
       }
     });
-
+    this.props.filteredFunc(this.titleList);
     if (this.labelVal === "Genres") {
       this.genresList = currentList.sort((a, b) => {
         if (a.genres > b.genres) {
@@ -112,8 +111,8 @@ componentDidMount(){
     }
   };
   render() {
-    const {response} = this.props.productReducer;
-    console.log('REDUX DATA', response);
+    const { response } = this.props.productReducer;
+    console.log("REDUX DATA", response);
     // const data = this.state.searchValues;
     return (
       <div className="App mainCont">
@@ -140,7 +139,11 @@ componentDidMount(){
           <Router history={history}>
             <Switch>
               <Route path="/:id" component={detailComponent} />
-              <SearchResults data={data} sortDescending={this.sortDescending} clickStoreData ={this.props.clickStoreData} />
+              <SearchResults
+                data={data}
+                sortDescending={this.sortDescending}
+                clickStoreData={this.props.clickStoreData}
+              />
               <Route path="/" component={App} />
             </Switch>
           </Router>
@@ -150,8 +153,15 @@ componentDidMount(){
   }
 }
 
-const mapStateToProps = state => ({productReducer: state.productReducer, data: [state.data]});
-const mapDispatchToProps = dispatch => 
-      bindActionCreators({ requestApiData, clickStoreData}, dispatch)
+const mapStateToProps = state => ({
+  productReducer: state.productReducer,
+  params: [state.params],
+  filteredTitle: state.filteredTitle,
+});
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ requestApiData, clickStoreData, filteredFunc}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps) (App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

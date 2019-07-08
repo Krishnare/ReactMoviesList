@@ -1,4 +1,4 @@
-import { RECEIVE_API_DATA, CLICK_REQUEST_DATA, REQUEST_API_DATA } from '../actions/actions';
+import { RECEIVE_API_DATA, CLICK_REQUEST_DATA, REQUEST_API_DATA, FILTERED_DATA } from '../actions/actions';
 
 //  function productReducer (state={}, {type, data, imageId}){
 function productReducer (state={}, action){
@@ -18,8 +18,13 @@ function productReducer (state={}, action){
       // return  Object.assign([], state, {imageId});
       return  {
         ...state,
-        data: action.data
+        params: action.params
       }
+      case FILTERED_DATA:
+        return {
+          ...state,
+          filteredTitle: action.filteredTitle
+        };
     default:
       return state;
   }

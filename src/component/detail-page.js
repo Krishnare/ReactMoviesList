@@ -14,7 +14,12 @@ class detailComponent extends Component {
   render() { 
    const state = store.getState();
     console.log('......', state);
-    let detailData = state.productReducer;
+    let detailData = state.productReducer.params;
+    if(!isNaN(detailData)){
+      detailData="";
+    }else{
+      detailData = state.productReducer.params;
+    }
     // if(!detailData.budget){
     //   detailData="";
     // }else{
