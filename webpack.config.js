@@ -5,9 +5,7 @@ const miniCssExtractPlugin = require("mini-css-extract-plugin");
 // const syntexDynamicImport = require('syntax-dynamic-import');
 module.exports = {
     mode: 'development',
-    entry: {
-      index: './src/index.js'
-    },
+    entry: [ "babel-polyfill", './src/index.js'],
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist')

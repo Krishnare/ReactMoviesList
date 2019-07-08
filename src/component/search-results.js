@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { Link, NavLink } from "react-router-dom";
 import detailComponent from "./detail-page";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { clickStoreData } from './actions/actions';
 
 class SearchResults extends Component {
   constructor(props) {
@@ -8,15 +11,18 @@ class SearchResults extends Component {
     this.data = "";
   }
   componentDidMount() {
-    this.props.sortDescending();
+    console.log('omooookkkkkkk',this.props);
+  }
+  clickDetailsPage=(id)=>{
+    this.props.clickStoreData(id);
   }
   render() {
-    console.log(this.props.data);
-    const renderData = this.props.data.map((value, index) => {
+    const {data} = this.props.data;
+    const renderData = data.map((value, index) => {
       return (
         <ul className="gridContainer">
           <li className="banner">
-            <Link to={`/${value.id}`} >
+            <Link to={`/${value.id}`} onClick={this.clickDetailsPage.bind(this, value.id)}>
               <img src={value.poster_path} />
             </Link>
           </li>
@@ -28,4 +34,8 @@ class SearchResults extends Component {
     return <div className="movieTitles">{renderData}</div>;
   }
 }
+// const mapDispatchToProps = () => 
+//       bindActionCreators({ clickStoreData})
+
+// export default connect(mapDispatchToProps) (SearchResults);
 export default SearchResults;

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import store from '../store';
 // import data from "./data";
 
 class detailComponent extends Component {
@@ -10,31 +11,27 @@ class detailComponent extends Component {
       productResponse: ""
     };
   }
-
-  componentDidMount() {
-    fetch(`https://reactjs-cdp.herokuapp.com/movies/${this.paramVal.params.id}`)
-      .then(res => res.json())
-      .then(response => {
-        JSON.stringify(response);
-        this.setState({ productResponse: response });
-      })
-      .catch(function() {
-        console.log("error");
-      });
-  }
-  render() {
-    let detailPorduct = this.state.productResponse;
-
+  render() { 
+   const state = store.getState();
+    console.log('......', state);
+    let detailData = state.productReducer;
+    // if(!detailData.budget){
+    //   detailData="";
+    // }else{
+    //   detailData = state.productReducer.params;
+    // }
+    console.log(detailData);
     return (
       <div>
         <ul>
           <li>
-            <img src={detailPorduct.poster_path} />
+            <img className="" src={detailData.poster_path} />
           </li>
-          <li>{detailPorduct.id}</li>
+          <li>{detailData.id}</li>
         </ul>
       </div>
     );
   }
 }
+
 export default detailComponent;

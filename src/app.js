@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
 import "../src/styles/app.css";
+import { connect } from 'react-redux';
 import data from "./data";
 import SearchResults from "./component/search-results";
 import detailComponent from "./component/detail-page";
 import history from "./component/history";
-import {} from "react-router-redux";
-import { createStore, applyMiddleware, combineReducer } from "redux";
+import { bindActionCreators } from 'redux';
+import { requestApiData, clickStoreData } from './component/actions/actions';
+// import {} from "react-router-redux";
 import { routerReducer, routerMiddleware } from "react-router-dom";
-import { Provider } from "react-redux";
+
 
 class App extends Component {
   constructor(props) {
@@ -30,6 +32,9 @@ class App extends Component {
     this.genresList = "";
   }
 
+componentDidMount(){
+  this.props.requestApiData();
+}
   sortDescending = labelVal => {
     const currentList = this.state.searchValues;
     this.setState({
@@ -107,9 +112,9 @@ class App extends Component {
     }
   };
   render() {
-    const data = this.state.searchValues;
-    console.log(data);
-
+    const {response} = this.props.productReducer;
+    console.log('REDUX DATA', response);
+    // const data = this.state.searchValues;
     return (
       <div className="App mainCont">
         <header className="searchBarContainer">
@@ -135,7 +140,7 @@ class App extends Component {
           <Router history={history}>
             <Switch>
               <Route path="/:id" component={detailComponent} />
-              <SearchResults data={data} sortDescending={this.sortDescending} />
+              <SearchResults data={data} sortDescending={this.sortDescending} clickStoreData ={this.props.clickStoreData} />
               <Route path="/" component={App} />
             </Switch>
           </Router>
@@ -145,4 +150,8 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({productReducer: state.productReducer, data: [state.data]});
+const mapDispatchToProps = dispatch => 
+      bindActionCreators({ requestApiData, clickStoreData}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps) (App);
