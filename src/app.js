@@ -112,8 +112,6 @@ class App extends Component {
   };
   render() {
     const { response } = this.props.productReducer;
-    console.log("REDUX DATA", response);
-    // const data = this.state.searchValues;
     return (
       <div className="App mainCont">
         <header className="searchBarContainer">

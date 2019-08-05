@@ -1,3 +1,4 @@
+
 const fetchData = async () =>{
     try{
         const response = await fetch('https://reactjs-cdp.herokuapp.com/movies/');
